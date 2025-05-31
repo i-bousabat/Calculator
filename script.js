@@ -2,7 +2,7 @@ let operator = '';
 let rightOperand = '';
 let leftOperand = '';
 
-const operands = ['+','-','*','/'];
+const operators = ['+','-','*','/', '='];
 
 function add(a,b) {
     return a + b;
@@ -43,13 +43,48 @@ container.addEventListener('click', (e) => {
     let selected =  e.target.textContent;
     alert(selected);
 
-    if (selected === 'DEL'){
-        //FUNCTINO TO REMOVE PREV INPUT
-    }else if (selected === 'AC'){
-        //FUNCTION FOR CLEARING
-    }else if (operands.includes(selected)){
-        display.textContent = `${selected}`;
-        
-    }
+    if (selected === 'DEL'){    //delete
+        del();
+
+    }else if (selected === 'AC'){   //clear
+        clear();
+
+    }else if (operators.includes(selected)){ //opeators
+        inputIsOperator(selected);
+    
+    }else if (selected === '='){ //input is equals
+
+
+
+    }else{  //numbers
+        display.textContent += `${selected}`; 
+    };
 });
 
+function del(){
+    display.textContent = display.textContent.slice(0,-1);
+};
+
+function clear(){
+    operator = '';
+    rightOperand = '';
+    leftOperand = '';
+    display.textContent = '';
+}
+function inputIsOperator(oper){
+    
+     if (leftOperand !== '' && rightOperand !== ''){
+        //
+     }
+    else if (leftOperand === ''){
+        leftOperand = display.textContent;
+        display.textContent = '';
+
+    }else{
+        rightOperand = display.textContent;
+        let result = operate(Number(leftOperand), oper, Number(rightOperand));
+        display.textContent = `${result}`;
+        leftOperand = `${result}`;
+        rightOperand = '';
+    }
+}
