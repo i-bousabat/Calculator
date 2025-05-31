@@ -1,6 +1,7 @@
 let operator = '';
 let rightOperand = '';
 let leftOperand = '';
+let justEvaluated = false;
 
 const operators = ['+','-','*','/', '='];
 
@@ -49,14 +50,18 @@ container.addEventListener('click', (e) => {            //TODO clean up---------
         clear();
 
     }else if (selected === '='){ //input is equals   
-        inputIsOperator(selected);
+        equals();
 
     }else if (operators.includes(selected)){ //opeators
-        operator = selected;
         inputIsOperator(selected);
 
     }else{  //numbers
-        display.textContent += `${selected}`; 
+        if (justEvaluated) {
+            display.textContent = selected;
+            justEvaluated = false;
+        } else {
+            display.textContent += selected; 
+        }
     };
 });
 
@@ -68,29 +73,35 @@ function clear(){
     operator = '';
     rightOperand = '';
     leftOperand = '';
+    justEvaluated = false;
     display.textContent = '';
 }
 function inputIsOperator(oper){ //TODO --------------------------------------------------------- may add equals() functions
      
-     if (oper === '='){
-        rightOperand = display.textContent;
-        alert([leftOperand, operator, rightOperand]);
-        let result = operate(Number(leftOperand), operator, Number(rightOperand));
-        display.textContent = `${result}`;  
-        leftOperand = ``;
-        rightOperand = ''; 
-        operator = '';
-    
-     }else if (leftOperand === ''){
+    if (leftOperand === ''){
         leftOperand = display.textContent;
+        operator = oper;
         display.textContent = '';
 
     }else{
         rightOperand = display.textContent;
-        let result = operate(Number(leftOperand), oper, Number(rightOperand));
+        let result = operate(Number(leftOperand), operator, Number(rightOperand));
         display.textContent = `${result}`;
-        leftOperand = ``;
+        leftOperand = `${result}`;
+        operator = oper; 
         rightOperand = ''; 
-        operator = '';
     }
+    justEvaluated = true;
+}
+
+function equals(){
+    rightOperand = display.textContent;
+    alert([leftOperand, operator, rightOperand]);
+    let result = operate(Number(leftOperand), operator, Number(rightOperand));
+    display.textContent = `${result}`;  
+    leftOperand = ``;
+    rightOperand = ''; 
+    operator = '';
+    justEvaluated = true;
+
 }
