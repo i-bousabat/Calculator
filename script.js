@@ -77,9 +77,9 @@ function inputIsOperator(oper){ //TODO -----------------------------------------
         alert([leftOperand, operator, rightOperand]);
         let result = operate(Number(leftOperand), operator, Number(rightOperand));
         display.textContent = `${result}`;  
-        leftOperand = `${result}`;
+        leftOperand = ``;
         rightOperand = ''; 
-        alert([leftOperand, rightOperand]);
+        operator = '';
     
      }else if (leftOperand === ''){
         leftOperand = display.textContent;
@@ -88,7 +88,9 @@ function inputIsOperator(oper){ //TODO -----------------------------------------
     }else{
         rightOperand = display.textContent;
         let result = operate(Number(leftOperand), oper, Number(rightOperand));
-        leftOperand = `${result}`;
-        rightOperand = '';
+        display.textContent = `${result}`;
+        leftOperand = ``;
+        rightOperand = ''; 
+        operator = '';
     }
 }
