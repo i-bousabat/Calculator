@@ -2,106 +2,129 @@ let operator = '';
 let rightOperand = '';
 let leftOperand = '';
 let justEvaluated = false;
-
-const operators = ['+','-','*','/', '='];
-
-function add(a,b) {
-    return a + b;
-};
-
-function subtract(a,b){
-    return a - b;
-};
-
-
-function multiply(a,b){
-    return a * b;
-};
-
-function divide(a,b){
-    return a / b;
-};
-
-function operate(a, operator, b){
-    switch (operator) {
-        case '+':
-            return add(a,b);
-        
-        case '-':
-            return subtract(a,b);
-
-        case '*':
-            return multiply(a,b);
-
-        case '/':
-            return divide(a,b);    
-    };
-};
-
 const container = document.querySelector('.container');
 const display = document.querySelector('#display');
-container.addEventListener('click', (e) => {            //TODO clean up---------------------------------------------------------------
-    let selected =  e.target.textContent;
 
-    if (selected === 'DEL'){    //delete
-        del();
+const operators = ['+', '-', '*', '/', '='];
 
-    }else if (selected === 'AC'){   //clear
+// Basic math functions
+function add(a, b) {
+    return a + b;
+};
+function subtract(a, b) {
+    return a - b;
+};
+function multiply(a, b) {
+    return a * b;
+};
+function divide(a, b) {
+    // Return error message for divide-by-zero
+    if (b === 0){
         clear();
+        return null;
+    }else{    
+        return a / b;
+    }
+}    
 
-    }else if (selected === '='){ //input is equals   
-        equals();
+// Round long decimals to avoid display overflow
+function roundResult(num) {
+    return Math.round(num * 1000) / 1000;
+}
 
-    }else if (operators.includes(selected)){ //opeators
-        inputIsOperator(selected);
+// Calls appropriate math function
+function operate(a, operator, b) {
+    switch (operator) {
+        case '+': return roundResult(add(a, b)); break;
+        case '-': return roundResult(subtract(a, b)); break;
+        case '*': return roundResult(multiply(a, b)); break;
+        case '/': return roundResult(divide(a, b)); break;
+    }
+    if (result === null) {
+        display.textContent = 'Cannot Divide By 0';
+        return; // prevent further execution
+    }
 
-    }else{  //numbers
+    return roundResult(result);
+}
+
+// Event listener for button clicks
+container.addEventListener('click', (e) => {
+    let selected = e.target.textContent;
+
+    if (selected === 'DEL') {
+        del(); // Delete last character
+
+    } else if (selected === 'AC') {
+        clear(); // Clear everything
+
+    } else if (selected === '=') {
+        equals(); // Evaluate expression
+
+    } else if (operators.includes(selected)) {
+        inputIsOperator(selected); // Store or evaluate with operator
+
+    } else {
+        // ✅ If just evaluated, start new input instead of appending
         if (justEvaluated) {
             display.textContent = selected;
             justEvaluated = false;
         } else {
-            display.textContent += selected; 
+            display.textContent += selected;
         }
-    };
+    }
 });
 
-function del(){
-    display.textContent = display.textContent.slice(0,-1);
-};
+// Remove last character from display
+function del() {
+    display.textContent = display.textContent.slice(0, -1);
+}
 
-function clear(){
+// Reset calculator state
+function clear() {
     operator = '';
     rightOperand = '';
     leftOperand = '';
     justEvaluated = false;
     display.textContent = '';
 }
-function inputIsOperator(oper){ //TODO --------------------------------------------------------- may add equals() functions
-     
-    if (leftOperand === ''){
+
+// Handle operator input and evaluate if needed
+function inputIsOperator(oper) {
+    // Prevent evaluating if no new input after last operator
+    if (display.textContent === '') {
+        operator = oper; // ✅ Replace previous operator if needed
+        return;
+    }
+
+    if (leftOperand === '') {
+        // ✅ First time an operator is pressed
         leftOperand = display.textContent;
         operator = oper;
         display.textContent = '';
-
-    }else{
+    } else {
+        // ✅ Chain operations: evaluate previous, then store new operator
         rightOperand = display.textContent;
         let result = operate(Number(leftOperand), operator, Number(rightOperand));
         display.textContent = `${result}`;
         leftOperand = `${result}`;
-        operator = oper; 
-        rightOperand = ''; 
+        operator = oper;
+        rightOperand = '';
     }
     justEvaluated = true;
 }
 
-function equals(){
+// Handle equals press
+function equals() {
+    if (leftOperand === '' || operator === '' || display.textContent === '') return;
+
     rightOperand = display.textContent;
-    alert([leftOperand, operator, rightOperand]);
     let result = operate(Number(leftOperand), operator, Number(rightOperand));
-    display.textContent = `${result}`;  
-    leftOperand = ``;
-    rightOperand = ''; 
+    display.textContent = `${result}`;
+
+    // ✅ Reset for new calculation
+    leftOperand = '';
+    rightOperand = '';
     operator = '';
     justEvaluated = true;
-
 }
