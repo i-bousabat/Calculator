@@ -39,9 +39,8 @@ function operate(a, operator, b){
 
 const container = document.querySelector('.container');
 const display = document.querySelector('#display');
-container.addEventListener('click', (e) => {
+container.addEventListener('click', (e) => {            //TODO clean up---------------------------------------------------------------
     let selected =  e.target.textContent;
-    alert(selected);
 
     if (selected === 'DEL'){    //delete
         del();
@@ -49,12 +48,12 @@ container.addEventListener('click', (e) => {
     }else if (selected === 'AC'){   //clear
         clear();
 
-    }else if (operators.includes(selected)){ //opeators
+    }else if (selected === '='){ //input is equals   
         inputIsOperator(selected);
-    
-    }else if (selected === '='){ //input is equals
 
-
+    }else if (operators.includes(selected)){ //opeators
+        operator = selected;
+        inputIsOperator(selected);
 
     }else{  //numbers
         display.textContent += `${selected}`; 
@@ -71,19 +70,24 @@ function clear(){
     leftOperand = '';
     display.textContent = '';
 }
-function inputIsOperator(oper){
+function inputIsOperator(oper){ //TODO --------------------------------------------------------- may add equals() functions
+     
+     if (oper === '='){
+        rightOperand = display.textContent;
+        alert([leftOperand, operator, rightOperand]);
+        let result = operate(Number(leftOperand), operator, Number(rightOperand));
+        display.textContent = `${result}`;  
+        leftOperand = `${result}`;
+        rightOperand = ''; 
+        alert([leftOperand, rightOperand]);
     
-     if (leftOperand !== '' && rightOperand !== ''){
-        //
-     }
-    else if (leftOperand === ''){
+     }else if (leftOperand === ''){
         leftOperand = display.textContent;
         display.textContent = '';
 
     }else{
         rightOperand = display.textContent;
         let result = operate(Number(leftOperand), oper, Number(rightOperand));
-        display.textContent = `${result}`;
         leftOperand = `${result}`;
         rightOperand = '';
     }
